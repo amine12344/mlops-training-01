@@ -5,7 +5,3 @@ function login() {
 function logout() {
     console.log("Logout");
 }
-
-function greet() {
-    console.log("Hello World");
-}
