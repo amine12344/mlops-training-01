@@ -8,3 +8,6 @@ function logout() {
 function goodbye() {
     console.log("Goodbye");
 }
+function greeting() {
+    console.log("Hello");
+}
