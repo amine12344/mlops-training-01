@@ -5,3 +5,6 @@ function login() {
 function logout() {
     console.log("Logout");
 }
+function goodbye() {
+    console.log("Goodbye");
+}
