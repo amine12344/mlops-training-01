@@ -1,0 +1,8 @@
+FROM node:16.18
+WORKDIR /app
+COPY package*.json ./
+COPY app.js ./
+COPY health.js ./
+RUN npm install 
+EXPOSE 8090
+CMD ["npm", "start"]
