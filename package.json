@@ -1,0 +1,8 @@
+{
+  "name": "docker-live-labs-api",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "commonjs",
+  "scripts": { "start": "node app.js", "health": "node health.js" },
+  "dependencies": { "express": "^4.19.2" }
+}
