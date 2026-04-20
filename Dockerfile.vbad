@@ -1,0 +1,5 @@
+FROM node:16.18
+WORKDIR /app
+COPY . .
+EXPOSE 8090
+CMD ["npm", "start"]
