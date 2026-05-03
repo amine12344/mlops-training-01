@@ -39,6 +39,25 @@ The server will start on port 8090.
    docker run -p 8090:8090 api-lab-test
    ```
 
+### Using Docker Compose
+This repository includes a `docker-compose.yml` stack that starts:
+- `proxy`: an NGINX reverse proxy on host port `8070`
+- `api`: the API service built from `./api`
+- `db`: a PostgreSQL database initialized with `mlops_db`
+
+Run the full stack with:
+```bash
+docker-compose up --build
+```
+
+Then visit:
+- `http://localhost:8070` for the proxied API
+
+Stop and remove containers, networks, and volumes with:
+```bash
+docker-compose down -v
+```
+
 ## Health Check
 Run the health check script:
 ```bash

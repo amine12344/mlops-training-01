@@ -1,0 +1,16 @@
+{
+    "name": "api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "build": "esbuild app.js --bundle --platform=node --outfile=dist/app.js",
+        "start": "node app.js",
+        "health": "node health.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "pg": "^8.11.0",
+        "esbuild": "^0.28.0"
+    }
+}
