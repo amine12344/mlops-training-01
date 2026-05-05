@@ -1,0 +1,167 @@
+name: Image promotion Pipline
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*.*.*'
+  permissions:
+    contents: read
+    packages: write
+    security-events: write
+  
+  env:
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ghcr.io/${{ github.repository }}/api
+  
+jobs:
+
+  build-can-push-dev:
+    build-scan-push-dev:
+    name: Build, scan and push to Dev Registry
+    runs-on: ubuntu-latest
+
+    outputs:
+      image_name: ${{ steps.vars.outputs.image_name }}
+      image_digest: ${{ steps.build.outputs.digest }}
+      dev_image: ${{ steps.vars.outputs.dev_image }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Normalize image name
+        id: vars
+        run: |
+          IMAGE_NAME=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          DEV_IMAGE="${IMAGE_NAME}:dev-${{ github.sha }}"
+
+          echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
+          echo "DEV_IMAGE=$DEV_IMAGE" >> "$GITHUB_ENV"
+
+          echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "dev_image=$DEV_IMAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Login to Dev Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image locally
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          push: false
+          load: true
+          tags: ${{ env.DEV_IMAGE }}
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.DEV_IMAGE }}
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: table
+          exit-code: 1
+
+      - name: Generate SARIF report
+        if: always()
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.DEV_IMAGE }}
+          severity: LOW,MEDIUM,HIGH,CRITICAL
+          ignore-unfixed: true
+          format: sarif
+          output: trivy-results.sarif
+          exit-code: 0
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+      - name: update security report github summary
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: "Trivy Vulnerability Scan Report"
+          message: |
+            ${{ steps.vars.outputs.image_name }}:dev-${{ github.sha }}
+            
+            ```markdown
+            ${{ steps.trivy.outputs.result }}
+            ```
+
+      - name: Push image to Dev Registry
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:dev
+            ${{ env.DEV_IMAGE }}
+   
+  promote-staging:
+      name: Promote to Staging Registry
+      runs-on: ubuntu-latest
+      needs: build-scan-push-dev
+
+      environment:
+        name: staging
+
+      steps:
+        - name: Login to GHCR
+          uses: docker/login-action@v3
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Promote Dev image to Staging
+          run: |
+            IMAGE_NAME="${{ needs.build-scan-push-dev.outputs.image_name }}"
+            DEV_IMAGE="${{ needs.build-scan-push-dev.outputs.dev_image }}"
+            STAGING_IMAGE="${IMAGE_NAME}:staging-${{ github.sha }}"
+
+            docker buildx imagetools create \
+              --tag "${IMAGE_NAME}:staging" \
+              --tag "${STAGING_IMAGE}" \
+              "${DEV_IMAGE}"
+  
+  promote-production:
+    name: Promote to Production Registry
+    runs-on: ubuntu-latest
+    needs:
+      - build-scan-push-dev
+      - promote-staging
+
+    environment:
+      name: production
+
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote Staging image to Production
+        run: |
+          IMAGE_NAME="${{ needs.build-scan-push-dev.outputs.image_name }}"
+          VERSION="${GITHUB_REF_NAME}"
+
+          docker buildx imagetools create \
+            --tag "${IMAGE_NAME}:prod" \
+            --tag "${IMAGE_NAME}:latest" \
+            --tag "${IMAGE_NAME}:${VERSION}" \
+            "${IMAGE_NAME}:staging-${{ github.sha }}"
+  
+
+    

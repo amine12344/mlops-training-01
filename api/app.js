@@ -11,6 +11,10 @@ app.get("/db", async (req,res)=>{
  catch(e){ res.status(500).json({error:e.message});}
 });
 
+app.get("/health", (req, res) => {
+  res.json({ status: "healthy", time: new Date() });
+});
+
 app.get("/crash",(req,res)=>{res.json({msg:"crash"});process.exit(1);});
 
 
