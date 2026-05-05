@@ -39,6 +39,25 @@ The server will start on port 8090.
    docker run -p 8090:8090 api-lab-test
    ```
 
+### Using Docker Compose
+This repository includes a `docker-compose.yml` stack that starts:
+- `proxy`: an NGINX reverse proxy on host port `8070`
+- `api`: the API service built from `./api`
+- `db`: a PostgreSQL database initialized with `mlops_db`
+
+Run the full stack with:
+```bash
+docker-compose up --build
+```
+
+Then visit:
+- `http://localhost:8070` for the proxied API
+
+Stop and remove containers, networks, and volumes with:
+```bash
+docker-compose down -v
+```
+
 ## Health Check
 Run the health check script:
 ```bash
@@ -56,3 +75,22 @@ npm run health
 ## Ignoring Files
 - `.gitignore`: Ensures that sensitive files, dependencies, and build artifacts are not committed to version control.
 - `.dockerignore`: Optimizes Docker builds by excluding unnecessary files from the build context.
+
+## Added Features
+This branch (`feat/compose-api`) introduces the following new features compared to the `main` branch:
+
+- **Docker Compose Setup**: A complete multi-service stack including:
+  - NGINX reverse proxy on port 8070
+  - Node.js API service built from the `./api` directory
+  - PostgreSQL database with health checks and proper initialization
+
+- **CI/CD Pipeline**: Automated workflow (`.github/workflows/image-promotion.yml`) for:
+  - Building and scanning Docker images for vulnerabilities using Trivy
+  - Promoting images through development, staging, and production environments
+  - Generating security reports and SARIF uploads for GitHub Security
+
+- **Health Checks**: 
+  - Added `/health` endpoint to the API for service monitoring
+  - Database health checks in Docker Compose to ensure services start in the correct order
+
+These features enhance the MLOps capabilities by providing container orchestration, automated deployment, and monitoring tools.
