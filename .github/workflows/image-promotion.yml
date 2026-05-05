@@ -1,4 +1,5 @@
 name: Image promotion Pipline
+
 on:
   pull_request:
     branches: [ main ]
@@ -6,14 +7,14 @@ on:
     branches: [ main ]
     tags:
       - 'v*.*.*'
-  permissions:
-    contents: read
-    packages: write
-    security-events: write
+permissions:
+  contents: read
+  packages: write
+  security-events: write
   
-  env:
-    REGISTRY: ghcr.io
-    IMAGE_NAME: ghcr.io/${{ github.repository }}/api
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/${{ github.repository }}/api
   
 jobs:
 
