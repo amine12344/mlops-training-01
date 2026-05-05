@@ -11,6 +11,7 @@ permissions:
   contents: read
   packages: write
   security-events: write
+  pull-requests: write
   
 env:
   REGISTRY: ghcr.io
@@ -83,6 +84,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-results.sarif
+      
       - name: update security report github summary
         if: always()
         uses: marocchino/sticky-pull-request-comment@v2
