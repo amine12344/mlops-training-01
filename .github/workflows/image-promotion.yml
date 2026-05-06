@@ -163,7 +163,7 @@ jobs:
             --tag "${IMAGE_NAME}:prod" \
             --tag "${IMAGE_NAME}:latest" \
             --tag "${IMAGE_NAME}:${VERSION}" \
-            "${IMAGE_NAME}:staging-${{ github.sha }}"
+            "${IMAGE_NAME}:prod-${{ github.sha }}"
   
 
     

@@ -1,4 +1,5 @@
 const express = require("express");
+const client = require("prom-client");
 const { Client } = require("pg");
 const app = express();
 const port = process.env.PORT || 8090;
@@ -17,5 +18,38 @@ app.get("/health", (req, res) => {
 
 app.get("/crash",(req,res)=>{res.json({msg:"crash"});process.exit(1);});
 
+const register = new client.Registry();
+
+client.collectDefaultMetrics({
+  register,
+});
+
+const httpRequestDurationMicroseconds = new client.Histogram({
+  name: "http_request_duration_ms",
+  help: "Duration of HTTP requests in ms",
+  labelNames: ["route", "method", "status_code"],
+  buckets: [50, 100, 200, 300, 400, 500],
+});
+
+register.registerMetric(httpRequestDurationMicroseconds);
+
+app.use((req, res, next) => {
+  const start = Date.now();
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+
+    httpRequestDurationMicroseconds
+      .labels(req.route?.path || req.path, req.method, res.statusCode)
+      .observe(duration);
+  });
+
+  next();
+});
+
+app.get("/metrics", async (req, res) => {
+  res.set("Content-Type", register.contentType);
+  res.end(await register.metrics());
+});
 
 app.listen(port,()=>console.log("API running"));
