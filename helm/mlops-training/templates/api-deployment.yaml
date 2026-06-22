@@ -1,10 +1,13 @@
+{{- if .Values.api.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api
-  namespace: mlops-training
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: api
 spec:
-  replicas: 2
+  replicas: {{ .Values.api.replicaCount }}
   selector:
     matchLabels:
       app: api
@@ -15,19 +18,20 @@ spec:
     spec:
       containers:
         - name: api
-          image: mlops-training-api:latest
-          imagePullPolicy: Never
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
-            - containerPort: 8090
+            - containerPort: {{ .Values.api.service.port }}
+              name: http
           env:
             - name: PORT
-              value: "8090"
+              value: "{{ .Values.api.service.port }}"
             - name: APP_VERSION
-              value: "kind-local"
+              value: "{{ .Values.api.env.appVersion }}"
             - name: DB_HOST
               value: postgres
             - name: DB_PORT
-              value: "5432"
+              value: "{{ .Values.postgres.service.port }}"
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -46,12 +50,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8090
+              port: http
             initialDelaySeconds: 15
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /readyz
-              port: 8090
+              port: http
             initialDelaySeconds: 15
             periodSeconds: 10
+{{- end }}

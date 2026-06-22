@@ -23,11 +23,53 @@ docker-compose up --build
 
 The compose setup runs the API and frontend for local testing.
 
+## Branch updates in this feature branch
+This branch adds the following updates:
+- new API endpoints: `/health`, `/readyz`, `/db`, `/metrics`, and `/crash`
+- Prometheus metrics via `prom-client`
+- frontend UI buttons for health, database, and metrics checks
+- `nginx:1.27-alpine` frontend image with `style.css`
+- Kubernetes deployments with 2 replicas, `Always` imagePullPolicy, and liveness/readiness probes
+- API deployment configured to use PostgreSQL credentials from `postgres-secret`
+
 ## Kubernetes
 Manifests are in `k8s/manual/`. Apply them to a cluster (ensure `kubectl` is configured):
 
 ```bash
 kubectl apply -f k8s/manual/namespace.yaml
+kubectl apply -f k8s/manual/postgres-secret.yaml
+kubectl apply -f k8s/manual/postgres-deployment.yaml
+kubectl apply -f k8s/manual/postgres-service.yaml
+kubectl apply -f k8s/manual/api-deployment.yaml
+kubectl apply -f k8s/manual/api-service.yaml
+kubectl apply -f k8s/manual/frontend-deployment.yaml
+kubectl apply -f k8s/manual/frontend-service.yaml
+```
+
+To access the frontend locally:
+
+```bash
+kubectl port-forward service/frontend 8080:80 -n mlops-training
+```
+
+Then open `http://localhost:8080` in your browser.
+
+### Using kind
+If you are using `kind`, create a cluster, build the local images, and load them before applying manifests.
+
+```bash
+kind create cluster --name mlops-training
+
+docker build -t mlops-training-api:latest -f api/Dockerfile ./api
+docker build -t mlops-training-frontend:latest -f frontend/Dockerfile frontend
+
+kind load docker-image mlops-training-api:latest --name mlops-training
+kind load docker-image mlops-training-frontend:latest --name mlops-training
+
+kubectl apply -f k8s/manual/namespace.yaml
+kubectl apply -f k8s/manual/postgres-secret.yaml
+kubectl apply -f k8s/manual/postgres-deployment.yaml
+kubectl apply -f k8s/manual/postgres-service.yaml
 kubectl apply -f k8s/manual/api-deployment.yaml
 kubectl apply -f k8s/manual/api-service.yaml
 kubectl apply -f k8s/manual/frontend-deployment.yaml

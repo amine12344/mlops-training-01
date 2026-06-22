@@ -1,0 +1,43 @@
+namespace: mlops-training
+
+global:
+  imagePullPolicy: IfNotPresent
+
+frontend:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/amine12344/mlops-training-01/frontend
+    tag: dev
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 30080
+
+api:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/amine12344/mlops-training-01/api
+    tag: dev
+  service:
+    port: 8090
+  env:
+    appVersion: helm-local
+
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 16-alpine
+  service:
+    port: 5432
+  auth:
+    user: postgres
+    password: postgres
+    database: mlops_db
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true

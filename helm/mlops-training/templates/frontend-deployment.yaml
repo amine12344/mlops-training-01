@@ -1,10 +1,13 @@
+{{- if .Values.frontend.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: mlops-training
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: frontend
 spec:
-  replicas: 2
+  replicas: {{ .Values.frontend.replicaCount }}
   selector:
     matchLabels:
       app: frontend
@@ -15,19 +18,21 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: mlops-training-frontend:latest
-          imagePullPolicy: Never
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.frontend.service.port }}
+              name: http
           livenessProbe:
             httpGet:
               path: /
-              port: 80
+              port: http
             initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: http
             initialDelaySeconds: 10
             periodSeconds: 10
+{{- end }}

@@ -1,12 +1,43 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <title>MLOps Training</title>
+  <meta charset="UTF-8" />
+  <title>MLOps Training Platform</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>MLOps Training App</h1>
-  <button onclick="checkApi()">Check API</button>
-  <pre id="output"></pre>
+  <main class="page">
+    <section class="hero">
+      <p class="badge">MLOps Training 01</p>
+      <h1>Ops Platform</h1>
+      <p class="subtitle">
+        Frontend, API, PostgreSQL, Kubernetes, Helm, Monitoring and GitOps.
+      </p>
+
+      <div class="actions">
+        <button onclick="checkHealth()">Check API Health</button>
+        <button onclick="checkDatabase()">Check Database</button>
+        <button onclick="loadMetrics()">Load Metrics</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>API Status</h2>
+        <pre id="health">Waiting...</pre>
+      </div>
+
+      <div class="card">
+        <h2>Database Status</h2>
+        <pre id="database">Waiting...</pre>
+      </div>
+
+      <div class="card">
+        <h2>Metrics</h2>
+        <pre id="metrics">Waiting...</pre>
+      </div>
+    </section>
+  </main>
 
   <script src="app.js"></script>
 </body>
