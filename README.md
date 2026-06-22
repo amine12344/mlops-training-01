@@ -1,3 +1,48 @@
+# MLOps Training 01
+
+Short repo for the MLOps training exercises: contains a simple API and frontend and example Kubernetes manifests.
+
+## Structure
+- `api/` — Node.js API service (app.js, Dockerfile)
+- `frontend/` — Simple frontend (app.js, Dockerfile, index.html)
+- `k8s/manual/` — Kubernetes manifests for deploying API and frontend
+- `docker-compose.yml` — Local compose setup
+
+## Quick start (local)
+1. Install dependencies (if needed):
+
+```bash
+npm install
+```
+
+2. Run with Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+The compose setup runs the API and frontend for local testing.
+
+## Kubernetes
+Manifests are in `k8s/manual/`. Apply them to a cluster (ensure `kubectl` is configured):
+
+```bash
+kubectl apply -f k8s/manual/namespace.yaml
+kubectl apply -f k8s/manual/api-deployment.yaml
+kubectl apply -f k8s/manual/api-service.yaml
+kubectl apply -f k8s/manual/frontend-deployment.yaml
+kubectl apply -f k8s/manual/frontend-service.yaml
+```
+
+## Development notes
+- API entrypoint: `api/app.js`
+- Frontend entrypoint: `frontend/app.js`
+
+## Related files
+- See `Dockerfile.vmultistage`, `Dockerfile.voptimized` for optimized builds.
+
+---
+If you want a more detailed README (badges, CI, examples), tell me what to include and I will expand it.
 # MLOps Training - Node.js API
 
 This is a simple Node.js API for MLOps training, featuring a basic Express server.
