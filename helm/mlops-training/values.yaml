@@ -2,6 +2,10 @@ namespace: mlops-training
 
 global:
   imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+  # imagePullSecrets:
+  #   - ghcr-secret
+  # Use a docker-registry secret named ghcr-secret if pulling private images from GHCR.
 
 frontend:
   enabled: true

@@ -27,10 +27,13 @@ The compose setup runs the API and frontend for local testing.
 This branch adds the following updates:
 - new API endpoints: `/health`, `/readyz`, `/db`, `/metrics`, and `/crash`
 - Prometheus metrics via `prom-client`
-- frontend UI buttons for health, database, and metrics checks
+- enhanced frontend UI for API health, database, and metrics checks
 - `nginx:1.27-alpine` frontend image with `style.css`
-- Kubernetes deployments with 2 replicas, `Always` imagePullPolicy, and liveness/readiness probes
+- Helm chart support for `IfNotPresent` imagePullPolicy and optional `imagePullSecrets`
+- configurable Helm `imagePullSecrets` for GHCR or private registries
+- Kubernetes deployments with 2 replicas and liveness/readiness probes
 - API deployment configured to use PostgreSQL credentials from `postgres-secret`
+- added PostgreSQL manifest support with `postgres-secret`, service, and deployment
 
 ## Kubernetes
 Manifests are in `k8s/manual/`. Apply them to a cluster (ensure `kubectl` is configured):
@@ -65,6 +68,16 @@ docker build -t mlops-training-frontend:latest -f frontend/Dockerfile frontend
 
 kind load docker-image mlops-training-api:latest --name mlops-training
 kind load docker-image mlops-training-frontend:latest --name mlops-training
+
+helm upgrade --install mlops-training helm/mlops-training -n mlops-training --set global.imagePullPolicy=IfNotPresent
+
+# If only a component changed, update just that component:
+# frontend image tag change
+helm upgrade mlops-training helm/mlops-training -n mlops-training --reuse-values \
+  --set frontend.image.tag=dev
+# api image tag change
+helm upgrade mlops-training helm/mlops-training -n mlops-training --reuse-values \
+  --set api.image.tag=dev
 
 kubectl apply -f k8s/manual/namespace.yaml
 kubectl apply -f k8s/manual/postgres-secret.yaml
