@@ -45,3 +45,4 @@ monitoring:
   enabled: true
   serviceMonitor:
     enabled: true
+  # ServiceMonitor is only created when the Prometheus Operator / ServiceMonitor CRD is available.

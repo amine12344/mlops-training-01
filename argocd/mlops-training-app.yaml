@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlops-training
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/amine12344/mlops-training-01.git
+    targetRevision: feat/upgrade-application
+    path: helm/mlops-training
+    helm:
+      values: |
+        namespace: mlops-training
+        global:
+          imagePullPolicy: IfNotPresent
+        frontend:
+          image:
+            repository: ghcr.io/amine12344/mlops-training-01/frontend
+            tag: dev
+        api:
+          image:
+            repository: ghcr.io/amine12344/mlops-training-01/api
+            tag: dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-training
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

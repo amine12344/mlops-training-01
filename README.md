@@ -68,17 +68,62 @@ docker build -t mlops-training-frontend:latest -f frontend/Dockerfile frontend
 
 kind load docker-image mlops-training-api:latest --name mlops-training
 kind load docker-image mlops-training-frontend:latest --name mlops-training
+```
 
-helm upgrade --install mlops-training helm/mlops-training -n mlops-training --set global.imagePullPolicy=IfNotPresent
+### Install or upgrade with Helm
+Use the Helm chart in `helm/mlops-training`.
 
-# If only a component changed, update just that component:
-# frontend image tag change
+For local `kind` development with loaded images:
+
+```bash
+helm upgrade --install mlops-training helm/mlops-training -n mlops-training \
+  --set api.image.repository=mlops-training-api \
+  --set api.image.tag=latest \
+  --set frontend.image.repository=mlops-training-frontend \
+  --set frontend.image.tag=latest \
+  --set global.imagePullPolicy=Never
+```
+
+For GHCR images with a private registry secret:
+
+```bash
+kubectl create secret docker-registry ghcr-secret \
+  --docker-server=ghcr.io \
+  --docker-username=<github-username> \
+  --docker-password=<personal-access-token> \
+  --docker-email=<email> \
+  -n mlops-training
+
+helm upgrade --install mlops-training helm/mlops-training -n mlops-training \
+  --set global.imagePullPolicy=IfNotPresent \
+  --set global.imagePullSecrets={ghcr-secret}
+```
+
+If Prometheus Operator / ServiceMonitor CRDs are not installed, disable monitoring when installing:
+
+```bash
+helm upgrade --install mlops-training helm/mlops-training -n mlops-training \
+  --set monitoring.enabled=false \
+  --set global.imagePullPolicy=IfNotPresent
+```
+
+### Update a single component
+If only a component changed, update just that image:
+
+```bash
 helm upgrade mlops-training helm/mlops-training -n mlops-training --reuse-values \
   --set frontend.image.tag=dev
-# api image tag change
+```
+
+```bash
 helm upgrade mlops-training helm/mlops-training -n mlops-training --reuse-values \
   --set api.image.tag=dev
+```
 
+### Optional manual manifest apply
+If you still want to apply the manual manifests instead of Helm:
+
+```bash
 kubectl apply -f k8s/manual/namespace.yaml
 kubectl apply -f k8s/manual/postgres-secret.yaml
 kubectl apply -f k8s/manual/postgres-deployment.yaml
@@ -88,6 +133,32 @@ kubectl apply -f k8s/manual/api-service.yaml
 kubectl apply -f k8s/manual/frontend-deployment.yaml
 kubectl apply -f k8s/manual/frontend-service.yaml
 ```
+
+### Argo CD
+To install Argo CD and deploy the application via GitOps:
+
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -f argocd/mlops-training-app.yaml
+```
+
+To access the Argo CD UI:
+
+```bash
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+Then open `https://localhost:8080` and log in with the Argo CD admin password.
+
+### Grafana
+If Grafana is installed in the `monitoring` namespace, port-forward to access it:
+
+```bash
+kubectl port-forward svc/monitoring-grafana 3000:80 -n monitoring
+```
+
+Then open `http://localhost:3000` in your browser.
 
 ## Development notes
 - API entrypoint: `api/app.js`

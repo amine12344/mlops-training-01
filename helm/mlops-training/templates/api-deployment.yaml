@@ -8,14 +8,6 @@ metadata:
     app: api
 spec:
   replicas: {{ .Values.api.replicaCount }}
-  template:
-    spec:
-  {{- if .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-  {{- range .Values.global.imagePullSecrets }}
-          - name: {{ . }}
-  {{- end }}
-  {{- end }}
   selector:
     matchLabels:
       app: api
@@ -24,6 +16,12 @@ spec:
       labels:
         app: api
     spec:
+  {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+  {{- range .Values.global.imagePullSecrets }}
+        - name: {{ . }}
+  {{- end }}
+  {{- end }}
       containers:
         - name: api
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"

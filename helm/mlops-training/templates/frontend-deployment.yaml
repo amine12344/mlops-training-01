@@ -8,14 +8,6 @@ metadata:
     app: frontend
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
-  template:
-    spec:
-  {{- if .Values.global.imagePullSecrets }}
-      imagePullSecrets:
-  {{- range .Values.global.imagePullSecrets }}
-          - name: {{ . }}
-  {{- end }}
-  {{- end }}
   selector:
     matchLabels:
       app: frontend
@@ -24,6 +16,12 @@ spec:
       labels:
         app: frontend
     spec:
+  {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+  {{- range .Values.global.imagePullSecrets }}
+        - name: {{ . }}
+  {{- end }}
+  {{- end }}
       containers:
         - name: frontend
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
