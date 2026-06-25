@@ -1,44 +1,162 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>MLOps Training Platform</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLOps Training Platform</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <main class="page">
+
+    <header class="navbar">
+
+        <div class="logo">
+            🚀 MLOps Training Platform
+        </div>
+
+        <div class="version">
+            Version
+            <span class="badge">
+                v2.0.0
+            </span>
+        </div>
+
+    </header>
+
     <section class="hero">
-      <p class="badge">MLOps Training 01</p>
-      <h1>Ops Platform</h1>
-      <p class="subtitle">
-        Frontend, API, PostgreSQL, Kubernetes, Helm, Monitoring and GitOps.
-      </p>
 
-      <div class="actions">
-        <button onclick="checkHealth()">Check API Health</button>
-        <button onclick="checkDatabase()">Check Database</button>
-        <button onclick="loadMetrics()">Load Metrics</button>
-      </div>
+        <h1>Modern MLOps Training Environment</h1>
+
+        <p>
+            Kubernetes • Helm • GitHub Actions • GitOps • ArgoCD • Prometheus • Grafana
+        </p>
+
     </section>
 
-    <section class="grid">
-      <div class="card">
-        <h2>API Status</h2>
-        <pre id="health">Waiting...</pre>
-      </div>
+    <section class="cards">
 
-      <div class="card">
-        <h2>Database Status</h2>
-        <pre id="database">Waiting...</pre>
-      </div>
+        <div class="card">
 
-      <div class="card">
-        <h2>Metrics</h2>
-        <pre id="metrics">Waiting...</pre>
-      </div>
+            <h2>API Health</h2>
+
+            <button onclick="checkHealth()">
+                Check API
+            </button>
+
+            <pre id="health">
+Waiting...
+            </pre>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Database</h2>
+
+            <button onclick="checkDatabase()">
+                Check Database
+            </button>
+
+            <pre id="database">
+Waiting...
+            </pre>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Metrics</h2>
+
+            <button onclick="loadMetrics()">
+                Load Metrics
+            </button>
+
+            <pre id="metrics">
+Waiting...
+            </pre>
+
+        </div>
+
     </section>
-  </main>
 
-  <script src="app.js"></script>
+    <section class="pipeline">
+
+        <h2>Deployment Pipeline</h2>
+
+        <div class="steps">
+
+            <div class="step">
+                💻
+                <span>Developer</span>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="step">
+                ⚙️
+                <span>GitHub Actions</span>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="step">
+                📦
+                <span>GHCR</span>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="step">
+                🚢
+                <span>ArgoCD</span>
+            </div>
+
+            <div class="arrow">➜</div>
+
+            <div class="step">
+                ☸️
+                <span>Kind Cluster</span>
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+
+        <strong>Deployment Status</strong>
+
+        <div class="status">
+
+            <div class="status-item success">
+                ✔ Frontend
+            </div>
+
+            <div class="status-item success">
+                ✔ API
+            </div>
+
+            <div class="status-item success">
+                ✔ PostgreSQL
+            </div>
+
+            <div class="status-item success">
+                ✔ Helm
+            </div>
+
+            <div class="status-item success">
+                ✔ GitOps
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script src="app.js"></script>
+
 </body>
+
 </html>
