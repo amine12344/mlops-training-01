@@ -3,9 +3,6 @@ namespace: mlops-training
 global:
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
-  # imagePullSecrets:
-  #   - ghcr-secret
-  # Use a docker-registry secret named ghcr-secret if pulling private images from GHCR.
 
 frontend:
   enabled: true
@@ -45,4 +42,3 @@ monitoring:
   enabled: true
   serviceMonitor:
     enabled: true
-  # ServiceMonitor is only created when the Prometheus Operator / ServiceMonitor CRD is available.

@@ -38,7 +38,7 @@ jobs:
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -62,13 +62,8 @@ jobs:
 
       - name: Update Kind Helm values
         run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path("helm/mlops-training/envs/kind-values.yaml")
-          tag = "sha-${{ github.sha }}"
-
-          content = f"""global:
+          cat > helm/mlops-training/envs/kind-values.yaml <<EOF
+          global:
             imagePullPolicy: Always
             imagePullSecrets:
               - ghcr-secret
@@ -76,16 +71,13 @@ jobs:
           api:
             image:
               repository: ghcr.io/amine12344/mlops-training-01/api
-              tag: {tag}
+              tag: ${IMAGE_TAG}
 
           frontend:
             image:
               repository: ghcr.io/amine12344/mlops-training-01/frontend
-              tag: {tag}
-          """
-
-          path.write_text(content)
-          PY
+              tag: ${IMAGE_TAG}
+          EOF
 
       - name: Commit GitOps image update
         run: |
@@ -97,6 +89,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "chore(gitops): deploy sha-${GITHUB_SHA}"
+            git commit -m "chore(gitops): deploy ${IMAGE_TAG}"
             git push origin feat/upgrade-application
           fi
