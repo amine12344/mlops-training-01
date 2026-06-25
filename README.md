@@ -94,9 +94,12 @@ kubectl create secret docker-registry ghcr-secret \
   --docker-email=<email> \
   -n mlops-training
 
-helm upgrade --install mlops-training helm/mlops-training -n mlops-training \
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring        --create-namespace
+
+helm upgrade --install mlops-training helm/mlops-training \
   --set global.imagePullPolicy=IfNotPresent \
-  --set global.imagePullSecrets={ghcr-secret}
+  --set global.imagePullSecrets={ghcr-secret} \
+  --create-namespace
 ```
 
 If Prometheus Operator / ServiceMonitor CRDs are not installed, disable monitoring when installing:
@@ -118,6 +121,22 @@ helm upgrade mlops-training helm/mlops-training -n mlops-training --reuse-values
 ```bash
 helm upgrade mlops-training helm/mlops-training -n mlops-training --reuse-values \
   --set api.image.tag=dev
+```
+
+```bash
+  helm upgrade mlops-training helm/mlops-training -n mlops-training --reuse-values \
+ kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+
+  kubectl apply -n argocd \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+ get argo password 
+ kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 --decode
+  echo 
+
+ create application in  argocd 
+  kubectl apply -f argocd/mlops-training-app.yaml
 ```
 
 ### Optional manual manifest apply
