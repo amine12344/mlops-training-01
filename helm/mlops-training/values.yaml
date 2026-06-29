@@ -44,3 +44,7 @@ monitoring:
   releaseName: kube-prometheus-stack
   serviceMonitor:
     enabled: true
+
+smokeTests:
+  enabled: true
+  image: curlimages/curl:8.10.1
