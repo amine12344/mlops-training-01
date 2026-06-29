@@ -1,5 +1,5 @@
 window.APP_VERSION = {
-  version: "local-dev",
-  commit: "local",
-  buildTime: "not-built-by-ci"
+  version: "v2.0.13",
+  commit: "56a9277",
+  buildTime: "2026-06-29 19:37 UTC"
 };
