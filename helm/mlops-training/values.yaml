@@ -1,4 +1,5 @@
 namespace: mlops-training
+namespaceCreate: true
 
 global:
   imagePullPolicy: IfNotPresent
@@ -40,5 +41,6 @@ postgres:
 
 monitoring:
   enabled: true
+  releaseName: kube-prometheus-stack
   serviceMonitor:
     enabled: true

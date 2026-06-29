@@ -1,3 +1,4 @@
+{{- if .Values.monitoring.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,3 +9,4 @@ metadata:
 data:
   mlops-platform-dashboard.json: |
 {{ .Files.Get "dashboards/mlops-platform-dashboard.json" | indent 4 }}
+{{- end }}

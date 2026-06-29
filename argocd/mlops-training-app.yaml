@@ -10,18 +10,9 @@ spec:
     targetRevision: feat/upgrade-application
     path: helm/mlops-training
     helm:
-      values: |
-        namespace: mlops-training
-        global:
-          imagePullPolicy: IfNotPresent
-        frontend:
-          image:
-            repository: ghcr.io/amine12344/mlops-training-01/frontend
-            tag: dev
-        api:
-          image:
-            repository: ghcr.io/amine12344/mlops-training-01/api
-            tag: dev
+      valueFiles:
+        - values.yaml
+        - envs/kind-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: mlops-training
