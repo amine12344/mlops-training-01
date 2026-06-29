@@ -6,9 +6,9 @@ global:
 api:
   image:
     repository: ghcr.io/amine12344/mlops-training-01/api
-    tag: sha-56a9277f088b6929ac6ad38701cec530f90e21bd
+    tag: sha-e67241d29c6dd4863c9aa21a9727744e915c75d7
 
 frontend:
   image:
     repository: ghcr.io/amine12344/mlops-training-01/frontend
-    tag: sha-56a9277f088b6929ac6ad38701cec530f90e21bd
+    tag: sha-e67241d29c6dd4863c9aa21a9727744e915c75d7
