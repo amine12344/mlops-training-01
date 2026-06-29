@@ -1,162 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MLOps Training Platform</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLOps Training Platform</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+  <header class="navbar">
+    <div class="logo">🚀 MLOps Training Platform</div>
+    <div class="version">GitOps Demo <span class="badge">LIVE</span></div>
+  </header>
 
-    <header class="navbar">
+  <section class="hero">
+    <h1>Modern MLOps Training Environment</h1>
+    <p>Kubernetes • Helm • GitHub Actions • GHCR • Argo CD • Prometheus • Grafana</p>
+  </section>
 
-        <div class="logo">
-            🚀 MLOps Training Platform Test ato deploy with argo
-        </div>
+  <section class="deployment-info">
+    <h2>🚀 Current Deployment</h2>
 
-        <div class="version">
-            Version
-            <span class="badge">
-                v2.0.0
-            </span>
-        </div>
+    <div class="deployment-grid">
+      <div class="info-card">
+        <span class="label">Version</span>
+        <span id="version">Loading...</span>
+      </div>
 
-    </header>
+      <div class="info-card">
+        <span class="label">Git SHA</span>
+        <span id="commit">Loading...</span>
+      </div>
 
-    <section class="hero">
+      <div class="info-card">
+        <span class="label">Build Time</span>
+        <span id="buildTime">Loading...</span>
+      </div>
 
-        <h1>Modern MLOps Training Environment</h1>
+      <div class="info-card">
+        <span class="label">Environment</span>
+        <span>Kind</span>
+      </div>
 
-        <p>
-            Kubernetes • Helm • GitHub Actions • GitOps • ArgoCD • Prometheus • Grafana
-        </p>
+      <div class="info-card">
+        <span class="label">Registry</span>
+        <span>GHCR</span>
+      </div>
 
-    </section>
+      <div class="info-card">
+        <span class="label">Deployment</span>
+        <span>Argo CD</span>
+      </div>
+    </div>
+  </section>
 
-    <section class="cards">
+  <section class="cards">
+    <div class="card">
+      <h2>API Health</h2>
+      <button onclick="checkHealth()">Check API</button>
+      <pre id="health">Waiting...</pre>
+    </div>
 
-        <div class="card">
+    <div class="card">
+      <h2>Database</h2>
+      <button onclick="checkDatabase()">Check Database</button>
+      <pre id="database">Waiting...</pre>
+    </div>
 
-            <h2>API Health</h2>
+    <div class="card">
+      <h2>Metrics</h2>
+      <button onclick="loadMetrics()">Load Metrics</button>
+      <pre id="metrics">Waiting...</pre>
+    </div>
+  </section>
 
-            <button onclick="checkHealth()">
-                Check API
-            </button>
+  <section class="pipeline">
+    <h2>Deployment Pipeline</h2>
 
-            <pre id="health">
-Waiting...
-            </pre>
+    <div class="steps">
+      <div class="step">💻 <span>Developer</span></div>
+      <div class="arrow">➜</div>
+      <div class="step">⚙️ <span>GitHub Actions</span></div>
+      <div class="arrow">➜</div>
+      <div class="step">📦 <span>GHCR</span></div>
+      <div class="arrow">➜</div>
+      <div class="step">🚢 <span>Argo CD</span></div>
+      <div class="arrow">➜</div>
+      <div class="step">☸️ <span>Kind Cluster</span></div>
+    </div>
+  </section>
 
-        </div>
+  <footer>
+    <strong>Deployment Status</strong>
 
-        <div class="card">
+    <div class="status">
+      <div class="status-item success">✔ Frontend</div>
+      <div class="status-item success">✔ API</div>
+      <div class="status-item success">✔ PostgreSQL</div>
+      <div class="status-item success">✔ Helm</div>
+      <div class="status-item success">✔ GitOps</div>
+    </div>
+  </footer>
 
-            <h2>Database</h2>
-
-            <button onclick="checkDatabase()">
-                Check Database
-            </button>
-
-            <pre id="database">
-Waiting...
-            </pre>
-
-        </div>
-
-        <div class="card">
-
-            <h2>Metrics</h2>
-
-            <button onclick="loadMetrics()">
-                Load Metrics
-            </button>
-
-            <pre id="metrics">
-Waiting...
-            </pre>
-
-        </div>
-
-    </section>
-
-    <section class="pipeline">
-
-        <h2>Deployment Pipeline</h2>
-
-        <div class="steps">
-
-            <div class="step">
-                💻
-                <span>Developer</span>
-            </div>
-
-            <div class="arrow">➜</div>
-
-            <div class="step">
-                ⚙️
-                <span>GitHub Actions</span>
-            </div>
-
-            <div class="arrow">➜</div>
-
-            <div class="step">
-                📦
-                <span>GHCR</span>
-            </div>
-
-            <div class="arrow">➜</div>
-
-            <div class="step">
-                🚢
-                <span>ArgoCD</span>
-            </div>
-
-            <div class="arrow">➜</div>
-
-            <div class="step">
-                ☸️
-                <span>Kind Cluster</span>
-            </div>
-
-        </div>
-
-    </section>
-
-    <footer>
-
-        <strong>Deployment Status</strong>
-
-        <div class="status">
-
-            <div class="status-item success">
-                ✔ Frontend
-            </div>
-
-            <div class="status-item success">
-                ✔ API
-            </div>
-
-            <div class="status-item success">
-                ✔ PostgreSQL
-            </div>
-
-            <div class="status-item success">
-                ✔ Helm
-            </div>
-
-            <div class="status-item success">
-                ✔ GitOps
-            </div>
-
-        </div>
-
-    </footer>
-
-    <script src="app.js"></script>
-
+  <script src="version.js"></script>
+  <script src="app.js"></script>
 </body>
-
 </html>

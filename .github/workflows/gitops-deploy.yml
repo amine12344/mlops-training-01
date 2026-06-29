@@ -50,6 +50,16 @@ jobs:
           tags: |
             ${{ env.API_IMAGE }}:${{ env.IMAGE_TAG }}
             ${{ env.API_IMAGE }}:dev
+      
+      - name: Generate frontend version file
+          run: |
+            cat > frontend/version.js <<EOF
+            window.APP_VERSION = {
+              version: "v2.0.${GITHUB_RUN_NUMBER}",
+              commit: "${GITHUB_SHA::7}",
+              buildTime: "$(date -u '+%Y-%m-%d %H:%M UTC')"
+            };
+            EOF
 
       - name: Build and push frontend
         uses: docker/build-push-action@v6
