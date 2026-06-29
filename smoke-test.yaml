@@ -1,9 +1,10 @@
-{{- if .Values.smokeTests.enabled }}
+---
+# Source: mlops-training/templates/smoke-test-job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: mlops-training-smoke-test
-  namespace: {{ .Values.namespace }}
+  namespace: mlops-training
   annotations:
     "helm.sh/hook": test
 spec:
@@ -13,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: smoke-test
-          image: {{ .Values.smokeTests.image }}
+          image: curlimages/curl:8.10.1
           command:
             - sh
             - -c
@@ -41,4 +42,3 @@ spec:
               curl -fsS http://api:8090/metrics | grep mlops_http_requests_total
 
               echo "Smoke test passed"
-{{- end }}
