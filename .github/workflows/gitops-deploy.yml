@@ -64,7 +64,7 @@ jobs:
           tags: ${{ env.FRONTEND_IMAGE }}:${{ env.IMAGE_TAG }}
 
       - name: Scan API image with Trivy
-        uses: aquasecurity/trivy-action@0.31.0
+        uses: aquasecurity/trivy-action@0.36.0
         with:
           scan-type: image
           image-ref: ${{ env.API_IMAGE }}:${{ env.IMAGE_TAG }}
@@ -74,7 +74,7 @@ jobs:
           exit-code: 0
 
       - name: Scan frontend image with Trivy
-        uses: aquasecurity/trivy-action@0.31.0
+        uses: aquasecurity/trivy-action@0.36.0
         with:
           scan-type: image
           image-ref: ${{ env.FRONTEND_IMAGE }}:${{ env.IMAGE_TAG }}
