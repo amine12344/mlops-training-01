@@ -1,0 +1,163 @@
+{
+  "uid": "mlops-platform",
+  "title": "MLOps Training Platform",
+  "tags": ["mlops", "api", "frontend", "kind"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "API Requests / second",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(rate(mlops_http_requests_total[1m]))",
+          "legendFormat": "requests/sec"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 5 },
+              { "color": "red", "value": 20 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "API p95 Latency",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(mlops_http_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.5 },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Frontend Pods Running",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(kube_pod_status_ready{namespace=\"mlops-training\",condition=\"true\",pod=~\"frontend-.*\"})",
+          "legendFormat": "frontend ready"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "green", "value": 2 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "API Pods Running",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(kube_pod_status_ready{namespace=\"mlops-training\",condition=\"true\",pod=~\"api-.*\"})",
+          "legendFormat": "api ready"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "API Traffic by Route",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(mlops_http_requests_total[1m])) by (route)",
+          "legendFormat": "{{route}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "API Latency p50 / p95",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(mlops_http_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p50"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(mlops_http_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      }
+    },
+    {
+      "type": "bargauge",
+      "title": "Database Checks",
+      "gridPos": { "x": 0, "y": 12, "w": 8, "h": 7 },
+      "targets": [
+        {
+          "expr": "sum(mlops_db_checks_total) by (status)",
+          "legendFormat": "{{status}}"
+        }
+      ]
+    },
+    {
+      "type": "gauge",
+      "title": "Demo Active Users",
+      "gridPos": { "x": 8, "y": 12, "w": 8, "h": 7 },
+      "targets": [
+        {
+          "expr": "mlops_active_users",
+          "legendFormat": "active users"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "unit": "short"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Container CPU Usage",
+      "gridPos": { "x": 16, "y": 12, "w": 8, "h": 7 },
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"mlops-training\",container!=\"\"}[5m])) by (pod)",
+          "legendFormat": "{{pod}}"
+        }
+      ]
+    }
+  ]
+}

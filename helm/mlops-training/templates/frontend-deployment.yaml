@@ -1,0 +1,44 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: frontend
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+  {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+  {{- range .Values.global.imagePullSecrets }}
+        - name: {{ . }}
+  {{- end }}
+  {{- end }}
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.service.port }}
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+{{- end }}

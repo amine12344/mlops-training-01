@@ -1,0 +1,44 @@
+---
+# Source: mlops-training/templates/smoke-test-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mlops-training-smoke-test
+  namespace: mlops-training
+  annotations:
+    "helm.sh/hook": test
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: smoke-test
+          image: curlimages/curl:8.10.1
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              echo "Smoke test started"
+
+              echo "Checking frontend service..."
+              curl -fsS http://frontend/
+
+              echo "Checking API root..."
+              curl -fsS http://api:8090/
+
+              echo "Checking API health..."
+              curl -fsS http://api:8090/health
+
+              echo "Checking API readiness..."
+              curl -fsS http://api:8090/readyz
+
+              echo "Checking API database..."
+              curl -fsS http://api:8090/db
+
+              echo "Checking API metrics..."
+              curl -fsS http://api:8090/metrics | grep mlops_http_requests_total
+
+              echo "Smoke test passed"

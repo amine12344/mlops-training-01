@@ -1,0 +1,16 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      port: {{ .Values.postgres.service.port }}
+      targetPort: postgres
+{{- end }}

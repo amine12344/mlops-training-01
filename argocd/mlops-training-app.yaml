@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlops-training
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/amine12344/mlops-training-01.git
+    targetRevision: feat/upgrade-application
+    path: helm/mlops-training
+    helm:
+      valueFiles:
+        - values.yaml
+        - envs/kind-values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-training
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,50 @@
+namespace: mlops-training
+namespaceCreate: true
+
+global:
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+
+frontend:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/amine12344/mlops-training-01/frontend
+    tag: dev
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 30080
+
+api:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/amine12344/mlops-training-01/api
+    tag: dev
+  service:
+    port: 8090
+  env:
+    appVersion: helm-local
+
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 16-alpine
+  service:
+    port: 5432
+  auth:
+    user: postgres
+    password: postgres
+    database: mlops_db
+
+monitoring:
+  enabled: true
+  releaseName: kube-prometheus-stack
+  serviceMonitor:
+    enabled: true
+
+smokeTests:
+  enabled: true
+  image: curlimages/curl:8.10.1
